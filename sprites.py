@@ -61,6 +61,7 @@ class Player(Sprite):
         # animation stuff
         self.current_frame = 0
         self.last_update = 0
+        # acccounting for player states
         self.jumping = False
         self.moving = False
         print("player instance created")
