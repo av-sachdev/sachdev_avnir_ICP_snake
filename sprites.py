@@ -66,6 +66,7 @@ class Player(Sprite):
         self.moving = False
         print("player instance created")
         self.load_images()
+        self.coins = 0
     # gets player input
     def get_keys(self):
         self.vel = vec(0,0)
@@ -112,13 +113,73 @@ class Player(Sprite):
         self.animate()
         self.rect.center = self.pos
         self.pos += self.vel * self.game.dt
+        hits = pg.sprite.spritecollide(self, self.game.all_coins, True)
+        if hits:
+            self.coins+=1
+            print("I collected",str(self.coins),"a coin!!!")
+
         self.hit_rect.centerx = self.pos.x
         collide_with_walls(self, self.game.all_walls, 'x')
         self.hit_rect.centery = self.pos.y
         collide_with_walls(self, self.game.all_walls, 'y')
         self.rect.center = self.hit_rect.center
 
-   
+
+
+class Mob(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        self.spritesheet = Spritesheet(path.join(self.game.img_dir, "sprite_sheet.png"))
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image = self.spritesheet.get_image(0,0,TILESIZE, TILESIZE)
+        self.image.set_colorkey(BLACK)
+        # self.image.fill(WHITE)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        # self.vx, self.vy = 0,0
+        self.vel = vec(0,0)
+        self.pos = vec(x,y) * TILESIZE
+        # self.x = x * TILESIZE
+        # self.y = y * TILESIZE
+        self.hit_rect = PLAYER_HIT_RECT
+        # animation stuff
+        self.current_frame = 0
+        self.last_update = 0
+        # acccounting for player states
+        self.jumping = False
+        self.moving = False
+        print("player instance created")
+        self.load_images()
+    # gets player input
+    def jump(self):
+        pass
+    def load_images(self):
+        self.idle_frames = [self.spritesheet.get_image(0,0, TILESIZE,TILESIZE), self.spritesheet.get_image(32,0, TILESIZE,TILESIZE)]
+    def animate(self):
+        now = pg.time.get_ticks()
+        if not self.jumping and not self.moving:
+            # this determines when to display the next frame
+            if now - self.last_update > 350:
+                self.last_update = now
+                self.current_frame = (self.current_frame + 1) % len(self.idle_frames)
+                bottom = self.rect.bottom
+                self.image = self.idle_frames[self.current_frame]
+                self.rect = self.image.get_rect()
+                self.rect.bottom = bottom
+        elif self.moving:
+            if now - self.last_update > 350:
+                self.last_update = now
+                self.current_frame = (self.current_frame + 1) % len(self.moving_frames)
+                bottom = self.rect.bottom
+                self.image = self.moving_frames[self.current_frame]
+                self.rect = self.image.get_rect()
+                self.rect.bottom = bottom
+            
+    def update(self):
+        self.animate()
 
 class Wall(Sprite):
     def __init__(self, game, x, y):
@@ -136,5 +197,19 @@ class Wall(Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
         print("wall instance created")
+
+
+class Coin(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.all_coins
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        pg.draw.circle(self.image, (GOLD), (TILESIZE/2, TILESIZE/2), TILESIZE/2)
+        self.image.set_colorkey(BLACK)
+        self.rect = self.image.get_rect()
+        self.vel = vec(0,0)
+        self.pos = vec(x,y) * TILESIZE
+        self.rect.center = self.pos
 
     # new object type Wall that is green

@@ -41,11 +41,27 @@ class Game:
         self.img_dir = path.join(self.game_dir, 'images')
         self.snd_dir = path.join(self.game_dir, 'sounds')
         self.map = Map(path.join(self.game_dir, map))
+        try:
+            with open(self.game_save_dir, "x", encoding = 'utf-8') as file:
+                file.write('Hello World')
+            print("File created successfully")
+        except FileExistsError:
+            print('File already exists, no acction taken')
+
+        with open(self.save_game_dir, 'r') as f:
+            try:
+                self.highscore = int(f.read())
+                print('high score set')
+            except:
+                self.highscore = 0
+                print('highscore is zero')
+
 
     def new(self):
         self.load_data('level1.txt')
         self.all_sprites = pg.sprite.Group()
         self.all_walls = pg.sprite.Group()
+        self.all_coins = pg.sprite.Group()
         # instantiate player here
         
         self.wall = Wall(self,5,0)
@@ -54,6 +70,10 @@ class Game:
             for col, tile in enumerate(tiles):
                 if tile == '1':
                     Wall(self, col, row)
+                if tile == 'M':
+                    Mob(self,col,row)
+                if tile == 'C':
+                    Coin(self,col,row)
         for row, tiles in enumerate(self.map.data):
             for col, tile in enumerate(tiles):
                 if tile == 'P':
