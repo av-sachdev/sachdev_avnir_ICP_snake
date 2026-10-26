@@ -35,20 +35,23 @@ class Game:
         self.clock = pg.time.Clock()
         self.running = True
         self.playing = True
+        self.score = 0
+        self.highscore = 0
 
     def load_data(self, map):
         self.game_dir = path.dirname(__file__)
+        self.game_save_file = path.join(self.game_dir, "highscore.txt")
         self.img_dir = path.join(self.game_dir, 'images')
         self.snd_dir = path.join(self.game_dir, 'sounds')
         self.map = Map(path.join(self.game_dir, map))
         try:
-            with open(self.game_save_dir, "x", encoding = 'utf-8') as file:
+            with open(self.game_save_file, "x", encoding = 'utf-8') as file:
                 file.write('Hello World')
             print("File created successfully")
         except FileExistsError:
             print('File already exists, no acction taken')
 
-        with open(self.save_game_dir, 'r') as f:
+        with open(self.game_save_file, 'r') as f:
             try:
                 self.highscore = int(f.read())
                 print('high score set')
@@ -90,6 +93,8 @@ class Game:
     def events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
+                with open(path.join(self.game_dir, self.game_save_file), 'w') as f:
+                    f.write(str(self.score))
                 if self.playing:
                     self.playing = False
                 self.running = False
