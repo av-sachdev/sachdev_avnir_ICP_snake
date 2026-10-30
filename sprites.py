@@ -51,10 +51,12 @@ class Player(Sprite):
         self.image.set_colorkey(BLACK)
         # self.image.fill(WHITE)
         self.rect = self.image.get_rect()
+        #player motion attributes
         self.rect.x = x
         self.rect.y = y
         # self.vx, self.vy = 0,0
         self.vel = vec(0,0)
+        self.acc = vec(0,0)
         self.pos = vec(x,y) * TILESIZE
         # self.x = x * TILESIZE
         # self.y = y * TILESIZE
@@ -68,23 +70,27 @@ class Player(Sprite):
         print("player instance created")
         self.load_images()
         self.coins = 0
+        self.cofric = -0.1
     # gets player input
     def get_keys(self):
-        self.vel = vec(0,0)
+        # self.vel = vec(0,0)
         # self.vx, self.vy = 0,0
         keys = pg.key.get_pressed()
         if keys[pg.K_a]:
-            # self.vx = -PLAYER_SPEED
-            self.vel.x = -PLAYER_SPEED
+            self.acc.x = -5
+            # self.vel.x = -PLAYER_SPEED
         if keys[pg.K_d]:
+            self.acc.x = 5
             # self.vx = PLAYER_SPEED
-            self.vel.x = PLAYER_SPEED
+            # self.vel.x = PLAYER_SPEED
         if keys[pg.K_w]:
+            self.acc.y = -5
             # self.vy = -PLAYER_SPEED
-            self.vel.y = -PLAYER_SPEED
+            # self.vel.y = -PLAYER_SPEED
         if keys[pg.K_s]:
+            self.acc.y = 5
             # self.vy = PLAYER_SPEED
-            self.vel.y = PLAYER_SPEED
+            # self.vel.y = PLAYER_SPEED
     def jump(self):
         pass
     def load_images(self):
@@ -109,11 +115,26 @@ class Player(Sprite):
                 self.rect = self.image.get_rect()
                 self.rect.bottom = bottom
             
-    def update(self):
+    def  update(self):
+        
         self.get_keys()
+        self.acc.x = self.vel.x*self.cofric
+        self.acc.x = self.vel.y*self.cofric
+        self.vel+=self.acc
+        self.pos+=self.vel + 0.5*self.acc
+
         self.animate()
         self.rect.center = self.pos
+        self.pos+=self.vel + 0.5*self.acc
         self.pos += self.vel * self.game.dt
+        tile_hits = pg.sprite.spritecollide(self, self.game.all_tiles, False)
+        if tile_hits:
+            if tile_hits[0].variant == 'ice':
+                self.cofric = 0.001
+            else:
+                self.cofric = -0.1
+                self.acc = vec(0,0)
+
         hits = pg.sprite.spritecollide(self, self.game.all_coins, True)
         if hits:
             self.coins+=1
@@ -222,6 +243,24 @@ class Wall(Sprite):
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
         self.image.fill(GREEN)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.vx, self.vy = 0,0
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.rect.x = self.x
+        self.rect.y = self.y
+        print("wall instance created")
+
+
+class FloorTile(Sprite):
+    def __init__(self, game, x, y, color):
+        self.groups = game.all_sprites, game.all_tiles
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image.fill(color)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
