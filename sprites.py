@@ -70,27 +70,21 @@ class Player(Sprite):
         print("player instance created")
         self.load_images()
         self.coins = 0
-        self.cofric = -0.1
+        self.cofric = PLAYER_FRIC
     # gets player input
     def get_keys(self):
-        # self.vel = vec(0,0)
-        # self.vx, self.vy = 0,0
         keys = pg.key.get_pressed()
         if keys[pg.K_a]:
-            self.acc.x = -5
-            # self.vel.x = -PLAYER_SPEED
+            self.acc.x = -PLAYER_ACC
         if keys[pg.K_d]:
-            self.acc.x = 5
-            # self.vx = PLAYER_SPEED
-            # self.vel.x = PLAYER_SPEED
+            self.acc.x = PLAYER_ACC
         if keys[pg.K_w]:
-            self.acc.y = -5
-            # self.vy = -PLAYER_SPEED
-            # self.vel.y = -PLAYER_SPEED
+            self.acc.y = -PLAYER_ACC
         if keys[pg.K_s]:
-            self.acc.y = 5
-            # self.vy = PLAYER_SPEED
-            # self.vel.y = PLAYER_SPEED
+            self.acc.y = PLAYER_ACC
+
+        if self.vel.x != 0 and self.vel.y != 0:
+            self.vel*=0.7071
     def jump(self):
         pass
     def load_images(self):
@@ -116,7 +110,7 @@ class Player(Sprite):
                 self.rect.bottom = bottom
             
     def  update(self):
-        
+        self.acc = vec(0,9.8)
         self.get_keys()
         self.acc.x = self.vel.x*self.cofric
         self.acc.x = self.vel.y*self.cofric

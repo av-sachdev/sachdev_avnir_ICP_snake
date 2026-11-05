@@ -9,10 +9,10 @@ Process - input processed (direction of control, magnitude)
 Output - Draw new frames pixels, sound, haptics (senses)
 (Store)
 
-GOALS:
-RULES:
-FEEDBACK:
-FREEDOM:
+GOALS: Snake Game with enemies. Keep going
+RULES: Dont get hit by the enemies
+FEEDBACK: Screen, Sound
+FREEDOM: Move around
 '''
 
 
