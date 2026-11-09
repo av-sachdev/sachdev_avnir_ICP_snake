@@ -67,10 +67,11 @@ class Player(Sprite):
         # acccounting for player states
         self.jumping = False
         self.moving = False
+        self.cofric = PLAYER_FRIC
         print("player instance created")
         self.load_images()
         self.coins = 0
-        self.cofric = PLAYER_FRIC
+
     # gets player input
     def get_keys(self):
         keys = pg.key.get_pressed()
@@ -110,14 +111,18 @@ class Player(Sprite):
                 self.rect.bottom = bottom
             
     def  update(self):
-        self.acc = vec(0,9.8)
+        self.animate()
+        self.acc = vec(0,0)
         self.get_keys()
         self.acc.x = self.vel.x*self.cofric
-        self.acc.x = self.vel.y*self.cofric
+        self.acc.y = self.vel.y*self.cofric
         self.vel+=self.acc
         self.pos+=self.vel + 0.5*self.acc
+        if abs(self.vel.x) < 0.1:
+            self.vel.x = 0
+        if abs(self.vel.y) < 0.1:
+            self.vel.y = 0
 
-        self.animate()
         self.rect.center = self.pos
         self.pos+=self.vel + 0.5*self.acc
         self.pos += self.vel * self.game.dt

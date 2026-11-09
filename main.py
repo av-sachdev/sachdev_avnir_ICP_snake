@@ -26,7 +26,7 @@ from utils import *
 
 # the game class a blueprint for the whole game...
 class Game:
-    # 
+    # initializes all variables for the class
     def __init__(self):
         pg.init()
         pg.mixer.init()
@@ -37,7 +37,7 @@ class Game:
         self.playing = True
         self.score = 0
         self.highscore = 0
-
+    # brings in data from other modules
     def load_data(self, map):
         self.game_dir = path.dirname(__file__)
         self.game_save_file = path.join(self.game_dir, "highscore.txt")
@@ -59,7 +59,7 @@ class Game:
                 self.highscore = 0
                 print('highscore is zero')
 
-
+    # creates the sprites in game/instantiates
     def new(self):
         self.load_data('level1.txt')
         self.all_sprites = pg.sprite.Group()
@@ -78,15 +78,15 @@ class Game:
                     Mob(self,col,row)
                 if tile == 'C':
                     Coin(self,col,row)
-                if tile == 'I':
-                    f = FloorTile(self, col, row, CYAN)
-                    f.variant = "ice"
+                # if tile == 'I':
+                #     f = FloorTile(self, col, row, CYAN)
+                #     f.variant = "ice"
 
         for row, tiles in enumerate(self.map.data):
             for col, tile in enumerate(tiles):
                 if tile == 'P':
                     self.player = Player(self, col, row)
-
+    # does necessary function properties
     def run(self):
         while self.running:
             # sets the delta time property and runs the tick function at FPS/1000
@@ -117,7 +117,7 @@ class Game:
         # 
         text_rect.midtop = (x,y)
         self.screen.blit(text_surface,text_rect)
-    
+    # draws frames
     def draw(self):
         self.screen.fill(BLUE)
         self.all_sprites.draw(self.screen)
