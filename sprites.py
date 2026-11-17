@@ -111,44 +111,94 @@ class Player(Sprite):
                 self.rect.bottom = bottom
             
     def  update(self):
-        self.animate()
-        self.acc = vec(0,0)
+        self.acc = vec(0,20)
         self.get_keys()
-        self.acc.x = self.vel.x*self.cofric
-        self.acc.y = self.vel.y*self.cofric
-        self.vel+=self.acc
-        self.pos+=self.vel + 0.5*self.acc
+        self.animate()
+       
+        self.acc.x += self.vel.x * self.cofric
+        self.vel.x += self.acc.x * self.game.dt
+        self.vel.y += self.acc.y * self.game.dt
+       
+        max_fall_speed = TILESIZE / max(self.game.dt, 0.001)
+        self.vel.y = min(self.vel.y, max_fall_speed)
+       
         if abs(self.vel.x) < 0.1:
-            self.vel.x = 0
+              self.vel.x = 0
         if abs(self.vel.y) < 0.1:
-            self.vel.y = 0
-
+              self.vel.y = 0
+       
+        # self.pos += self.vel * self.game.dt + 0.5 * self.acc * (self.game.dt ** 2)
+        floor_hits = pg.sprite.spritecollide(self, self.game.all_walls, False)
+       
+        if floor_hits:
+            self.jumping = False
+        elif floor_hits != True:
+            self.jumping = True
+       
         self.rect.center = self.pos
-        self.pos+=self.vel + 0.5*self.acc
-        self.pos += self.vel * self.game.dt
-        tile_hits = pg.sprite.spritecollide(self, self.game.all_tiles, False)
-        if tile_hits:
-            if tile_hits[0].variant == 'ice':
-                self.cofric = 0.001
-            else:
-                self.cofric = -0.1
-                self.acc = vec(0,0)
-
+       
+        # self.pos += self.vel * self.game.dt
+       
+        self.pos += self.vel + 0.5 * self.acc
+       
+        if self.vel.y == 0:
+            self.jumping = False
+           
         hits = pg.sprite.spritecollide(self, self.game.all_coins, True)
         if hits:
-            self.coins+=1
-            self.game.score+=1
-            print("I collected",str(self.coins),"a coin!!!")
-            Particle(self.game, hits[0].rect.x, hits[0].rect.y)
-            hits[0].kill()
+            self.coins += 1
+            self.game.score += 1
+            self.game.pickup_snd.play()
+            # print(f"I have {self.coins} coins")
+            for i in range(20):
+                Particle(self.game, hits[0].rect.x, hits[0].rect.y)
+                hits[0].kill()
             print(str(len(self.game.all_particles)))
-
-
+ 
         self.hit_rect.centerx = self.pos.x
         collide_with_walls(self, self.game.all_walls, 'x')
         self.hit_rect.centery = self.pos.y
         collide_with_walls(self, self.game.all_walls, 'y')
         self.rect.center = self.hit_rect.center
+
+        # self.animate()
+        # self.acc = vec(0,0)
+        # self.get_keys()
+        # self.acc.x = self.vel.x*self.cofric
+        # self.acc.y = self.vel.y*self.cofric
+        # self.vel+=self.acc
+        # self.pos+=self.vel + 0.5*self.acc
+        # if abs(self.vel.x) < 0.1:
+        #     self.vel.x = 0
+        # if abs(self.vel.y) < 0.1:
+        #     self.vel.y = 0
+
+        # self.rect.center = self.pos
+        # self.pos+=self.vel + 0.5*self.acc
+        # self.pos += self.vel * self.game.dt
+        # tile_hits = pg.sprite.spritecollide(self, self.game.all_tiles, False)
+        # if tile_hits:
+        #     if tile_hits[0].variant == 'ice':
+        #         self.cofric = 0.001
+        #     else:
+        #         self.cofric = -0.1
+        #         self.acc = vec(0,0)
+
+        # hits = pg.sprite.spritecollide(self, self.game.all_coins, True)
+        # if hits:
+        #     self.coins+=1
+        #     self.game.score+=1
+        #     print("I collected",str(self.coins),"a coin!!!")
+        #     Particle(self.game, hits[0].rect.x, hits[0].rect.y)
+        #     hits[0].kill()
+        #     print(str(len(self.game.all_particles)))
+
+
+        # self.hit_rect.centerx = self.pos.x
+        # collide_with_walls(self, self.game.all_walls, 'x')
+        # self.hit_rect.centery = self.pos.y
+        # collide_with_walls(self, self.game.all_walls, 'y')
+        # self.rect.center = self.hit_rect.center
 
 
 
