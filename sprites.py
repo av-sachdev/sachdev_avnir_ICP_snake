@@ -168,6 +168,12 @@ class Player(Sprite):
                 Particle(self.game, hits[0].rect.x, hits[0].rect.y)
                 hits[0].kill()
             print(str(len(self.game.all_particles)))
+
+        # mob_hits = pg.sprite.spritecollide(self, self.game.all_mobs, False, collide_hit_rect)
+        # if mob_hits:
+        #     print("mob hit")
+        #     self.game.playing = False
+        #     self.game.running = False
  
         self.hit_rect.centerx = self.pos.x
         collide_with_walls(self, self.game.all_walls, 'x')
@@ -242,7 +248,7 @@ class PewPew(Sprite):
 
 class Mob(Sprite):
     def __init__(self, game, x, y):
-        self.groups = game.all_sprites
+        self.groups = game.all_sprites, game.all_mobs
         Sprite.__init__(self, self.groups)
         self.game = game
         self.spritesheet = Spritesheet(path.join(self.game.img_dir, "sprite_sheet.png"))
@@ -262,6 +268,8 @@ class Mob(Sprite):
         # animation stuff
         self.current_frame = 0
         self.last_update = 0
+
+        self.speed = MOB_SPEED
         # acccounting for player states
         self.jumping = False
         self.moving = False
@@ -293,8 +301,22 @@ class Mob(Sprite):
                 # self.rect = self.image.get_rect()
                 self.rect.bottom = bottom
             
+    def follow(self, obj):
+        # make the player follow the given object
+        direction = vec(obj.rect.centerx - self.rect.centerx, obj.rect.centery - self.rect.centery)
+        if direction.length() > 0:
+            direction = direction.normalize()
+        self.vel = direction
+
     def update(self):
         self.animate()
+        self.follow(self.game.player)
+        self.pos += self.vel * self.speed
+        self.hit_rect.centerx = self.pos.x
+        collide_with_walls(self, self.game.all_walls, 'x')
+        self.hit_rect.centery = self.pos.y
+        # self.vel = vec(self.game.player.pos - self.pos).normalize()
+        self.rect.center = self.hit_rect.center
 
 class Particle(Sprite):
     def __init__(self, game, x, y):

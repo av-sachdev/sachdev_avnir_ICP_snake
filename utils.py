@@ -1,6 +1,7 @@
 import pygame as pg
 from settings import *
 from math import floor
+from collections import deque
 
 class Map:
     def __init__(self,filename):
