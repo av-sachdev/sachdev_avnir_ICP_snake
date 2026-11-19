@@ -267,6 +267,7 @@ class Mob(Sprite):
         self.moving = False
         print("player instance created")
         self.load_images()
+        # print(self.rect.x, self.rect.y)
     # gets player input
     def jump(self):
         pass
@@ -281,7 +282,7 @@ class Mob(Sprite):
                 self.current_frame = (self.current_frame + 1) % len(self.idle_frames)
                 bottom = self.rect.bottom
                 self.image = self.idle_frames[self.current_frame]
-                self.rect = self.image.get_rect()
+                # self.rect = self.image.get_rect()
                 self.rect.bottom = bottom
         elif self.moving:
             if now - self.last_update > 350:
@@ -289,7 +290,7 @@ class Mob(Sprite):
                 self.current_frame = (self.current_frame + 1) % len(self.moving_frames)
                 bottom = self.rect.bottom
                 self.image = self.moving_frames[self.current_frame]
-                self.rect = self.image.get_rect()
+                # self.rect = self.image.get_rect()
                 self.rect.bottom = bottom
             
     def update(self):

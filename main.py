@@ -65,7 +65,7 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.all_walls = pg.sprite.Group()
         self.all_coins = pg.sprite.Group()
-        self.all_tiles = pg.sprite.Group
+        self.all_tiles = pg.sprite.Group()
         # instantiate player here
         
         self.wall = Wall(self,5,0)
@@ -74,10 +74,11 @@ class Game:
             for col, tile in enumerate(tiles):
                 if tile == '1':
                     Wall(self, col, row)
-                if tile == 'M':
-                    Mob(self,col,row)
+                # if tile == 'M':
+                #     print(col,row)
+                #     Mob(self, col, row)
                 if tile == 'C':
-                    Coin(self,col,row)
+                    Coin(self, col, row)
                 # if tile == 'I':
                 #     f = FloorTile(self, col, row, CYAN)
                 #     f.variant = "ice"

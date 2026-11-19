@@ -26,3 +26,69 @@ class Spritesheet:
         new_image = pg.transform.scale(image,(width,height))
         image = new_image
         return image
+
+class Cooldown():
+    def __init__(self):
+        self.current_time = 0
+        self.event_time = 0
+        self.delta = 0
+    def ticking(self):
+        self.current_time = floor((pg.time.get_ticks())/1000)
+        self.delta = self.current_time - self.event_time
+        # print(self.delta)
+    def timer(self):
+        self.current_time = floor((pg.time.get_ticks())/1000)
+
+
+def get_grid_pos(pixel_pos):
+    """Converts (x, y) pixel coordinates to (col, row) grid indices."""
+    return int(pixel_pos[0] // TILESIZE), int(pixel_pos[1] // TILESIZE)
+
+
+def get_pixel_center(grid_pos):
+    """Converts (col, row) grid indices to the center (x, y) of that tile."""
+    col, row = grid_pos
+    return pg.math.Vector2(
+        col * TILESIZE + TILESIZE // 2,
+        row * TILESIZE + TILESIZE // 2
+    )
+
+
+def bfs_path(grid, start, goal):
+    """Returns the shortest path from start to goal as a list of (col, row) tuples."""
+    if start == goal:
+        return []
+
+    queue = deque([start])
+    came_from = {
+        start: None
+        }
+    directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]  # Up, Down, Left, Right
+
+    while queue:
+        current = queue.popleft()
+
+        if current == goal:
+            break
+
+        for dx, dy in directions:
+            nx, ny = current[0] + dx, current[1] + dy
+            neighbor = (nx, ny)
+
+            # Check grid bounds, walkability, and if already visited
+            if 0 <= ny < len(grid) and 0 <= nx < len(grid[0]):
+                if grid[ny][nx] == 0 and neighbor not in came_from:
+                    queue.append(neighbor)
+                    came_from[neighbor] = current
+
+    # Reconstruct path if goal was reached
+    if goal not in came_from:
+        return []
+
+    path = []
+    curr = goal
+    while curr != start:
+        path.append(curr)
+        curr = came_from[curr]
+    path.reverse()
+    return path
