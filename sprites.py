@@ -162,7 +162,7 @@ class Player(Sprite):
         if hits:
             self.coins += 1
             self.game.score += 1
-            self.game.coin_collect.play()
+            self.game.collect_snd.play()
             # print(f"I have {self.coins} coins")
             for i in range(20):
                 Particle(self.game, hits[0].rect.x, hits[0].rect.y)
@@ -251,8 +251,8 @@ class Mob(Sprite):
         self.image.set_colorkey(BLACK)
         # self.image.fill(WHITE)
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+        self.rect.x = x * TILESIZE
+        self.rect.y = y * TILESIZE
         # self.vx, self.vy = 0,0
         self.vel = vec(0,0)
         self.pos = vec(x,y) * TILESIZE
@@ -265,7 +265,7 @@ class Mob(Sprite):
         # acccounting for player states
         self.jumping = False
         self.moving = False
-        print("player instance created")
+        print("mob instance created")
         self.load_images()
         # print(self.rect.x, self.rect.y)
     # gets player input

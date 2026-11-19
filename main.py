@@ -43,6 +43,8 @@ class Game:
         self.game_save_file = path.join(self.game_dir, "highscore.txt")
         self.img_dir = path.join(self.game_dir, 'images')
         self.snd_dir = path.join(self.game_dir, 'sounds')
+        self.collect_snd = pg.mixer.Sound(path.join(self.snd_dir, "coin_collect.mp3"))
+
         self.map = Map(path.join(self.game_dir, map))
         try:
             with open(self.game_save_file, "x", encoding = 'utf-8') as file:
@@ -63,9 +65,11 @@ class Game:
     def new(self):
         self.load_data('level1.txt')
         self.all_sprites = pg.sprite.Group()
+        self.all_mobs = pg.sprite.Group()
         self.all_walls = pg.sprite.Group()
         self.all_coins = pg.sprite.Group()
         self.all_tiles = pg.sprite.Group()
+        self.all_particles = pg.sprite.Group()
         # instantiate player here
         
         self.wall = Wall(self,5,0)
@@ -74,9 +78,9 @@ class Game:
             for col, tile in enumerate(tiles):
                 if tile == '1':
                     Wall(self, col, row)
-                # if tile == 'M':
-                #     print(col,row)
-                #     Mob(self, col, row)
+                if tile == 'M':
+                    print(col,row)
+                    Mob(self, col, row)
                 if tile == 'C':
                     Coin(self, col, row)
                 # if tile == 'I':
