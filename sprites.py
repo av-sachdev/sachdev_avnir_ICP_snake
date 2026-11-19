@@ -4,6 +4,7 @@ from settings import *
 from utils import *
 from os import path
 from random import randint
+from math import *
 
 vec = pg.math.Vector2
 
@@ -83,9 +84,22 @@ class Player(Sprite):
             self.acc.y = -PLAYER_ACC
         if keys[pg.K_s]:
             self.acc.y = PLAYER_ACC
-
+        if keys[pg.K_f]:
+            self.pew()
+           
         if self.vel.x != 0 and self.vel.y != 0:
             self.vel*=0.7071
+    def pew(self):
+        mpos = pg.mouse.get_pos()
+        print(mpos)
+        targetx = mpos[0]
+        targety = mpos[1]
+        dx = targetx = self.hit_rect.x
+        dy = targety = self.hit_rect.y
+        angle = atan2(dx,dy)
+        speed_x = 10*sin(angle)
+        speed_y = 10*cos(angle)
+        PewPew(self.game, self.rect.centerx, self.rect.centery, TILESIZE/4, TILESIZE/4, speed_x, speed_y)
     def jump(self):
         pass
     def load_images(self):
@@ -111,7 +125,7 @@ class Player(Sprite):
                 self.rect.bottom = bottom
             
     def  update(self):
-        self.acc = vec(0,20)
+        self.acc = vec(0,0)
         self.get_keys()
         self.animate()
        
@@ -148,7 +162,7 @@ class Player(Sprite):
         if hits:
             self.coins += 1
             self.game.score += 1
-            self.game.pickup_snd.play()
+            self.game.coin_collect.play()
             # print(f"I have {self.coins} coins")
             for i in range(20):
                 Particle(self.game, hits[0].rect.x, hits[0].rect.y)
@@ -199,6 +213,30 @@ class Player(Sprite):
         # self.hit_rect.centery = self.pos.y
         # collide_with_walls(self, self.game.all_walls, 'y')
         # self.rect.center = self.hit_rect.center
+
+class PewPew(Sprite):
+    def __init__(self, game, x, y, w, h, sx, sy):
+        self.groups = game.all_sprites
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((w,h))
+        self.image.set_colorkey(BLACK)
+        self.rect = self.image.get_rect()
+        self.radius = TILESIZE/8
+        pg.draw.circle(self.image, YELLOW, self.rect.center, self.radius)
+        self.rect.x = x
+        self.rect.y = y
+        self.speed_x = sx
+        self.speed_y = sy
+        self.fired = False
+    def update(self):
+        self.rect.x += self.speed_x
+        self.rect.y += self.speed_y
+       
+        if self.rect.y < 0 or self.rect.y > HEIGHT:
+            self.kill()
+    
+
 
 
 
