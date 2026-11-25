@@ -83,9 +83,9 @@ class Game:
                     Mob(self, col, row)
                 if tile == 'C':
                     Coin(self, col, row)
-                # if tile == 'I':
-                #     f = FloorTile(self, col, row, CYAN)
-                #     f.variant = "ice"
+                if tile == 'I':
+                    f = FloorTile(self, col, row, CYAN)
+                    f.variant = "ice"
 
         for row, tiles in enumerate(self.map.data):
             for col, tile in enumerate(tiles):

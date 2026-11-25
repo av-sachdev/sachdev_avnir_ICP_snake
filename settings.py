@@ -3,7 +3,7 @@ import pygame as pg
 WIDTH = 1024
 HEIGHT = 768
 TILESIZE = 32
-FPS = 60
+FPS = 100
 
 # COLORS
 

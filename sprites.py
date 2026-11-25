@@ -315,6 +315,7 @@ class Mob(Sprite):
         self.hit_rect.centerx = self.pos.x
         collide_with_walls(self, self.game.all_walls, 'x')
         self.hit_rect.centery = self.pos.y
+        collide_with_walls(self, self.game.all_walls, 'y')
         # self.vel = vec(self.game.player.pos - self.pos).normalize()
         self.rect.center = self.hit_rect.center
 
