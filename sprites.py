@@ -5,6 +5,7 @@ from utils import *
 from os import path
 from random import randint
 from math import *
+import time
 
 vec = pg.math.Vector2
 
@@ -168,12 +169,12 @@ class Player(Sprite):
                 Particle(self.game, hits[0].rect.x, hits[0].rect.y)
                 hits[0].kill()
             print(str(len(self.game.all_particles)))
-
-        # mob_hits = pg.sprite.spritecollide(self, self.game.all_mobs, False, collide_hit_rect)
-        # if mob_hits:
-        #     print("mob hit")
-        #     self.game.playing = False
-        #     self.game.running = False
+        
+        mob_hits = pg.sprite.spritecollide(self, self.game.all_mobs, collide_hit_rect)
+        if mob_hits:
+            print("mob hit")
+            self.game.playing = False
+            self.game.running = False
  
         self.hit_rect.centerx = self.pos.x
         collide_with_walls(self, self.game.all_walls, 'x')
@@ -348,6 +349,24 @@ class Particle(Sprite):
         
 
 class Wall(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.all_walls
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image.fill(GREEN)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.vx, self.vy = 0,0
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.rect.x = self.x
+        self.rect.y = self.y
+        print("wall instance created")
+
+
+class Cactus(Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.all_walls
         Sprite.__init__(self, self.groups)
